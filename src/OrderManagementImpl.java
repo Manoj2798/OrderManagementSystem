@@ -1,10 +1,6 @@
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class OrderManagementImpl implements OrderManagement{
 
@@ -26,6 +22,8 @@ public class OrderManagementImpl implements OrderManagement{
 //                e.printStackTrace();
 //            }
 //        }else
+
+
             list.add(new Order(orderId,orderDescription,deliveryAddress,orderDate,amount));
             System.out.println("Order Added Successfully....");
 
@@ -66,78 +64,148 @@ public class OrderManagementImpl implements OrderManagement{
 
     @Override
     public void viewByOrderId(String orderID) {
-
-        System.out.println("----------------------------");
-        System.out.println("Order Detail");
-        System.out.println("----------------------------");
-        for(Order i : list)
-        {
-            if(orderID.equals(i.getOrderId()))
-            {
-                System.out.println("Order Id : " +i.getOrderId());
-                System.out.println("Order Description : " +i.getOrderDescription());
-                System.out.println("Delivery Address : " +i.getDeliveryAddress());
-                System.out.println("Order Date : " +i.getOrderDate());
-                System.out.println("Amount : " +i.getAmount());
-                System.out.println("Delivery Date Time : " +i.getDeliveryDateTime());
+            System.out.println("----------------------------");
+            System.out.println("Order Detail");
+            System.out.println("----------------------------");
+            for (Order i : list) {
+                if (orderID.equals(i.getOrderId())) {
+                    System.out.println("Order Id : " + i.getOrderId());
+                    System.out.println("Order Description : " + i.getOrderDescription());
+                    System.out.println("Delivery Address : " + i.getDeliveryAddress());
+                    System.out.println("Order Date : " + i.getOrderDate());
+                    System.out.println("Amount : " + i.getAmount());
+                    System.out.println("Delivery Date Time : " + i.getDeliveryDateTime());
+                }
             }
-        }
     }
 
     @Override
     public void sortOrder() {
+//        ******** Choose Sort Order Property*********
+//        1.	OrderId
+//        2.	Order Desc
+//        3.	DeliveryAddress
+//        4.	Order Date
+//        5.	Amount
+//        6.	Delivery Datetime
+//        7.	Exit
+            Scanner sc = new Scanner(System.in);
+
+            System.out.println("********* Choose Sort Order Property **********");
+            System.out.println("1. OrderId");
+            System.out.println("2. Order Desc");
+            System.out.println("3. Delivery Address");
+            System.out.println("4. Order Date");
+            System.out.println("5. Amount");
+            System.out.println("6. Delivery DateTime");
+
+            int choice = sc.nextInt();
+            if (choice == 1) {
+                Collections.sort(list, new Comparator<Order>() {
+                    @Override
+                    public int compare(Order o1, Order o2) {
+                        return Integer.parseInt(o1.getOrderId()) - Integer.parseInt(o2.getOrderId());
+                    }
+                });
+                System.out.println(list.toString());
+                System.out.println("Successfully sorted by OrderId.....");
+            } else if (choice == 2) {
+                Collections.sort(list, new Comparator<Order>() {
+                    @Override
+                    public int compare(Order o1, Order o2) {
+                        return o1.getOrderDescription().compareToIgnoreCase(o2.getOrderDescription());
+                    }
+                });
+                System.out.println(list.toString());
+                System.out.println("Successfully Sorted By OrderDescription....");
+            } else if (choice == 3) {
+                Collections.sort(list, new Comparator<Order>() {
+                    @Override
+                    public int compare(Order o1, Order o2) {
+                        return o1.getDeliveryAddress().compareTo(o2.getDeliveryAddress());
+                    }
+                });
+                System.out.println(list.toString());
+                System.out.println("Successfully sorted on delivery Address.....");
+            } else if (choice == 4) {
+                Collections.sort(list, new Comparator<Order>() {
+                    @Override
+                    public int compare(Order o1, Order o2) {
+                        return o1.getOrderDate().compareTo(o2.getOrderDate());
+                    }
+                });
+                System.out.println(list.toString());
+                System.out.println("Successfully sorted on order Date....");
+            } else if (choice == 5) {
+                Collections.sort(list, new Comparator<Order>() {
+                    @Override
+                    public int compare(Order o1, Order o2) {
+                        return (int) (o1.getAmount() - o2.getAmount());
+                    }
+                });
+                System.out.println(list.toString());
+                System.out.println("Successfully sorted on Amount.....");
+            } else if (choice == 6) {
+                Collections.sort(list, new Comparator<Order>() {
+                    @Override
+                    public int compare(Order o1, Order o2) {
+                        return o1.getDeliveryDateTime().compareTo(o2.getDeliveryDateTime());
+                    }
+                });
+                System.out.println(list.toString());
+                System.out.println("Successfully sorted on Delivery Date Time....");
+            }
+
 
     }
 
     @Override
     public void deleteOrderById(String orderId) {
-        Load();
-        System.out.println("The size of the List is : " +list.size());
-        for(int i=0;i<list.size();i++)
-        {
-            if(orderId.equals(list.get(i).getOrderId()))
-            {
-                list.remove(i);
-                break;
+            Load();
+//        System.out.println("The size of the List is : " +list.size());
+            for (int i = 0; i < list.size(); i++) {
+                if (orderId.equals(list.get(i).getOrderId())) {
+                    list.remove(i);
+                    break;
+                }
             }
-        }
-        System.out.println("Your order has been removed Successfully.....");
+            System.out.println("Your order has been removed Successfully.....");
 
-        //updating the file
-        try {
-            FileOutputStream fo = new FileOutputStream(f);
-            ObjectOutputStream oo = new ObjectOutputStream(fo);
-            oo.writeObject(list);
-            oo.flush();
-            oo.close();
-        }catch(Exception e)
-        {
-            e.printStackTrace();
-        }
+            //updating the file
+            try {
+                FileOutputStream fo = new FileOutputStream(f);
+                ObjectOutputStream oo = new ObjectOutputStream(fo);
+                oo.writeObject(list);
+                oo.flush();
+                oo.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
     }
 
     @Override
     public void markAsDelivered(String orderID) {
-        Load();
-        System.out.println("The size of the List is : " +list.size());
+            Load();
+            System.out.println("The size of the List is : " + list.size());
 
-        for(int i=0;i<list.size();i++)
-        {
-            if(orderID.equals(list.get(i).getOrderId()))
-            {
-                list.get(i).setDeliveryDateTime(LocalDateTime.now());
-                System.out.println("Order Delivered Successfully...");
-                break;
+            for (int i = 0; i < list.size(); i++) {
+                if (orderID.equals(list.get(i).getOrderId())) {
+                    list.get(i).setDeliveryDateTime(LocalDateTime.now());
+                    System.out.println("Order Delivered Successfully...");
+                    break;
+                }
             }
-        }
 
-        //updating the file
-        update();
+            //updating the file
+            update();
     }
 
     @Override
     public void generateReport() {
-
+        Order o = new Order();
+        Thread t1 = new Thread(o);
+        t1.start();
     }
 
     @Override
@@ -187,4 +255,35 @@ public class OrderManagementImpl implements OrderManagement{
             e.printStackTrace();
         }
     }
+
+//    public void run()
+//    {
+//        if(f.length()!=0) {
+//            try {
+//                FileInputStream fi = new FileInputStream(f);
+//                ObjectInputStream oi = new ObjectInputStream(fi);
+//                list = (ArrayList<Order>) oi.readObject();
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }else
+//            System.out.println("List is empty.....");
+//
+//        for(int i=0;i<list.size();i++)
+//        {
+//            if(list.get(i).getDeliveryDateTime()!=null)
+//            {  try {
+//                File file = new File("Order_txt_" + String.valueOf(LocalDateTime.now()));
+//                file.createNewFile();
+//
+//                    FileWriter fw = new FileWriter(file);
+//                    PrintWriter pw = new PrintWriter(fw);
+//                    pw.print(list.get(i).getOrderId() + " " + list.get(i).getOrderDescription());
+//            }catch(Exception e)
+//            {
+//                e.printStackTrace();
+//            }
+//            }
+//        }
+//    }
 }
