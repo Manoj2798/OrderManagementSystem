@@ -68,7 +68,8 @@ public class Launch {
             switch (choice) {
 
                 case 1:
-                case 'Y':
+                {
+                    int count = 0;
                     System.out.println("Enter orderId : ");
                     String orderId = sc.next();
                     /*System.out.println("OrderId is : " +orderId);
@@ -76,16 +77,26 @@ public class Launch {
                     for (Order i : orders) {
                         if (orderId.equalsIgnoreCase(i.getOrderId())) {
                             System.out.println("Duplicate Order Id... Please Enter the order again");
-
-                            break lbl;
-
+                            count = 1;
+//                            break lbl;
+                            break;
                         }
+                    }
+                    if(count == 1)
+                    {
+                        flag = true;
+                        break;
                     }
                     Pattern p = Pattern.compile("[a-zA-Z]");
                     Matcher matcher = p.matcher(orderId);
                     if (matcher.find()) {
-                        System.out.println("Invalid Order Id entered.....");
-                        break lbl;
+                        System.out.println("Invalid Order Id entered..... Please Enter the Order Details Again...");
+                        count = 1;
+                    }
+                    if(count == 1)
+                    {
+                        flag = true;
+                        break;
                     }
                     sc.skip("\n");
                     System.out.println("Enter orderDescription: ");
@@ -94,7 +105,12 @@ public class Launch {
                     Matcher matcher1 = p.matcher(orderDescription);
                     if (matcher1.find()) {
                         System.out.println("Invalid Order Description....Please re-enter :");
-                        break lbl;
+                        count = 1;
+                    }
+                    if(count == 1)
+                    {
+                        flag = true;
+                        break;
                     }
 
                     System.out.println("Enter deliveryAddress: ");
@@ -102,12 +118,12 @@ public class Launch {
                     System.out.println("Enter amount: ");
                     double amount = sc.nextDouble();
 
-//                    String dateFormat = "yyyy-MM-dd hh:mm:ss a";
-//                    LocalDateTime now = LocalDateTime.now();
-//                    LocalDateTime format = LocalDateTime.parse(now.format(DateTimeFormatter.ofPattern(dateFormat)));
+                    String dateFormat = "yyyy-MM-dd hh:mm:ss a";
+                    LocalDateTime now = LocalDateTime.now();
+                    String format = (now.format(DateTimeFormatter.ofPattern(dateFormat)));
 
-                    LocalDateTime orderDate = LocalDateTime.now();
-                    o.addOrder(orderId, orderDescription, deliveryAddress, orderDate, amount);
+                   // LocalDateTime orderDate = LocalDateTime.now();
+                    o.addOrder(orderId, orderDescription, deliveryAddress, format, amount);
                     System.out.println("Do you want to Place another order... Press Y to place.. N to return to menu");
                     char ch = sc.next().charAt(0);
                     if (ch == 'Y') {
@@ -115,6 +131,7 @@ public class Launch {
                         break;
                     }
                     break;
+                }
 
                 case 2:
                     if (orders.isEmpty()) {
@@ -159,9 +176,13 @@ public class Launch {
                         System.out.println("Enter orderId : ");
                         String id = sc.next();
 
+                        /*String dFormat = "yyyy-MM-dd hh:mm:ss a";
+                        LocalDateTime nowTime = LocalDateTime.now();
+                        String formatTime = (nowTime.format(DateTimeFormatter.ofPattern(dFormat)));*/
+
                         for (int i = 0; i < orders.size(); i++) {
                             if (id.equals(orders.get(i).getOrderId()) && orders.get(i).getDeliveryDateTime() != null) {
-                                System.out.println("Order has been already delivered at : " + LocalDateTime.now());
+                                System.out.println("Order has been already delivered at : " + orders.get(i).getDeliveryDateTime());
                                 break lbl;
                             }
                         }

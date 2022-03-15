@@ -1,7 +1,7 @@
 import java.time.LocalDateTime;
 
 public interface OrderManagement {
-     void addOrder(String orderId, String orderDescription, String deliveryAddress, LocalDateTime orderDate, double amount);
+     void addOrder(String orderId, String orderDescription, String deliveryAddress, String orderDate, double amount);
      void viewOrder();
      void viewByOrderId(String orderID);
      void sortOrder();

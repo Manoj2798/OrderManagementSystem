@@ -1,12 +1,16 @@
 import java.io.*;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class Order implements Serializable,Runnable{
 
     private static final long serialVersionUID = -7242995977297486759L;
 
     static File f = new File("C:\\Workspace\\OrderManagementSystem\\OrderManagement.txt");
+//    static File fnew = new File("C:\\Workspace\\OrderManagementSystem\\Delivered.txt");
     static ArrayList<Order> list = new ArrayList<>();
     static ArrayList<Order> delivered = new ArrayList<>();
 
@@ -14,16 +18,17 @@ public class Order implements Serializable,Runnable{
     private String orderId;
     private String orderDescription;
     private String deliveryAddress;
-    private LocalDateTime orderDate;
+//    private LocalDateTime orderDate
+    private String orderDate;
     private double amount;
-    private LocalDateTime deliveryDateTime;
+    private String deliveryDateTime;
 
     public Order()
     {
 
     }
 
-    public Order(String orderId, String orderDescription, String deliveryAddress, LocalDateTime orderDate, double amount) {
+    public Order(String orderId, String orderDescription, String deliveryAddress, String orderDate, double amount) {
         this.orderId = orderId;
         this.orderDescription = orderDescription;
         this.deliveryAddress = deliveryAddress;
@@ -55,11 +60,11 @@ public class Order implements Serializable,Runnable{
         this.deliveryAddress = deliveryAddress;
     }
 
-    public LocalDateTime getOrderDate() {
+    public String getOrderDate() {
         return orderDate;
     }
 
-    public void setOrderDate(LocalDateTime orderDate) {
+    public void setOrderDate(String orderDate) {
         this.orderDate = orderDate;
     }
 
@@ -71,89 +76,73 @@ public class Order implements Serializable,Runnable{
         this.amount = amount;
     }
 
-    public LocalDateTime getDeliveryDateTime() {
+    public String getDeliveryDateTime() {
         return deliveryDateTime;
     }
 
-    public void setDeliveryDateTime(LocalDateTime deliveryDateTime) {
+    public void setDeliveryDateTime(String deliveryDateTime) {
         this.deliveryDateTime = deliveryDateTime;
     }
 
     public String toString()
     {
-          return " | \t" +orderId + " | \t" + orderDescription + " | \t" + deliveryAddress + " | \t" + orderDate + " | \t" + amount + " | \t" +deliveryDateTime + " |";
+          return " | \t\t" +orderId + " \t| \t\t" + orderDescription + " \t\t| \t\t" + deliveryAddress + " \t\t\t| " + orderDate + " | \t\t" + amount + " | \t\t" +deliveryDateTime + " |";
     }
 
     @Override
     public void run() {
         load();
 
-        for(int i=0;i<list.size();i++)
+        if(delivered.isEmpty()) {
+            for (int i = 0; i < list.size(); i++) {
+                if (list.get(i).getDeliveryDateTime() != null) {
+                    delivered.add(list.get(i));
+                }
+            }
+        }else
         {
-            if(list.get(i).getDeliveryDateTime() != null)
-            {
-                try {
-                    FileWriter fw = new FileWriter("Delivered.txt",true);
-                    PrintWriter pw = new PrintWriter(fw);
-                    pw.println(list.get(i).toString());
-                    pw.close();
-                }catch(Exception e)
+            for(int j=0;j<list.size();j++) {
+                if (delivered.get(j).getOrderId().contains(list.get(j).getOrderId()))
                 {
-                    e.printStackTrace();
+
+                }else
+                {
+                    delivered.add(list.get(j));
                 }
             }
         }
+        System.out.println("The size of Delivered List is : " +delivered.size());
+
+//        String dateFormat = "yyyy-MM-dd hh:mm:ss a";
+        Date date = new Date();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd");
 
 
-
-    /*load();
-
-        for(int i=0;i<list.size();i++)
+        File file = new File("Delivered_" +dateFormat.format(date) + ".txt");
+        try {
+            file.createNewFile();
+        }catch(Exception e)
         {
-            if(list.get(i).getDeliveryDateTime() == null)
+            e.printStackTrace();
+        }
+        try{
+            FileWriter fw = new FileWriter(file);
+            PrintWriter pw = new PrintWriter(fw);
+            if(file.length() == 0)
             {
-
-            }else {
-                try {
-                    FileOutputStream fo = new FileOutputStream("OrderDelivered.txt");
-                    ObjectOutputStream oo = new ObjectOutputStream(fo);
-                    oo.writeObject(list.get(i).getOrderId() + " " + list.get(i).getOrderDescription() + " " + list.get(i).getOrderDate());
-                    oo.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
+                pw.println(" OrderId \t" + " OrderDescription \t" + " DeliveryAddress \t" + " OrderDateTime \t" + " \t\tAmount \t\t\t" + " DeliveryDateTime \t");
             }
 
-                try {
-                    FileInputStream fi = new FileInputStream("OrderDelivered.txt");
-                    ObjectInputStream oi = new ObjectInputStream(fi);
-                   delivered = (ArrayList<Order>) oi.readObject();
-                   oi.close();
-                }catch(Exception e)
-                {
-                    e.printStackTrace();
-                }
-
-                File newFile = new File("Delivered.txt");
-                try {
-                    newFile.createNewFile();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                try{
-                    FileWriter fw = new FileWriter(newFile);
-                    PrintWriter pw = new PrintWriter(fw);
-                    for(int j=0;j<delivered.size();j++) {
-                        pw.println(delivered.get(j).getOrderId() + " " + delivered.get(j).getOrderDescription());
-                    }
-                    pw.close();
-                }catch(Exception e)
-                {
-                    e.printStackTrace();
-                }
-            }*/
+            for(int i=0;i<delivered.size();i++)
+            {
+                pw.println(delivered.get(i).toString());
+            }
+            pw.close();
+            delivered.clear();
+        }catch(Exception e)
+        {
+            e.printStackTrace();
+        }
 
 
     }

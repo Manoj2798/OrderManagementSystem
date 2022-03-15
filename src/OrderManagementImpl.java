@@ -1,5 +1,6 @@
 import java.io.*;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class OrderManagementImpl implements OrderManagement{
@@ -9,8 +10,8 @@ public class OrderManagementImpl implements OrderManagement{
 //    ArrayList<Order> orders = new ArrayList<>();
 
     @Override
-    public void addOrder(String orderId,String orderDescription,String deliveryAddress,LocalDateTime orderDate,double amount) {
-
+    public void addOrder(String orderId,String orderDescription,String deliveryAddress,String orderDate,double amount) {
+    Load();
 //        if(list.isEmpty())
 //        {
 //            try{
@@ -49,6 +50,7 @@ public class OrderManagementImpl implements OrderManagement{
                 FileInputStream fi = new FileInputStream(f);
                 ObjectInputStream oi = new ObjectInputStream(fi);
                 list = (ArrayList<Order>) oi.readObject();
+                System.out.println(" OrderId \t" + " OrderDescription \t" + " DeliveryAddress \t" + " OrderDateTime \t" + " \t\tAmount \t\t\t" + " DeliveryDateTime \t");
 
 //                System.out.println(" | \t +orderId +  | \t + orderDescription +  | \t + deliveryAddress +  | \t + orderDate +  | \t + amount +  | \t +deliveryDateTime +  |");
                 // reading to the console
@@ -64,6 +66,7 @@ public class OrderManagementImpl implements OrderManagement{
 
     @Override
     public void viewByOrderId(String orderID) {
+        Load();
             System.out.println("----------------------------");
             System.out.println("Order Detail");
             System.out.println("----------------------------");
@@ -89,6 +92,7 @@ public class OrderManagementImpl implements OrderManagement{
 //        5.	Amount
 //        6.	Delivery Datetime
 //        7.	Exit
+        Load();
             Scanner sc = new Scanner(System.in);
 
             System.out.println("********* Choose Sort Order Property **********");
@@ -107,7 +111,14 @@ public class OrderManagementImpl implements OrderManagement{
                         return Integer.parseInt(o1.getOrderId()) - Integer.parseInt(o2.getOrderId());
                     }
                 });
-                System.out.println(list.toString());
+
+                System.out.println(" OrderId \t" + " OrderDescription \t" + " DeliveryAddress \t" + " OrderDateTime \t" + " \t\tAmount \t\t\t" + " DeliveryDateTime \t");
+
+                for(int i=0;i<list.size();i++){
+                    System.out.println(list.get(i).toString());
+                }
+
+//                System.out.println(list.toString());
                 System.out.println("Successfully sorted by OrderId.....");
             } else if (choice == 2) {
                 Collections.sort(list, new Comparator<Order>() {
@@ -116,7 +127,12 @@ public class OrderManagementImpl implements OrderManagement{
                         return o1.getOrderDescription().compareToIgnoreCase(o2.getOrderDescription());
                     }
                 });
-                System.out.println(list.toString());
+                System.out.println(" OrderId \t" + " OrderDescription \t" + " DeliveryAddress \t" + " OrderDateTime \t" + " \t\tAmount \t\t\t" + " DeliveryDateTime \t");
+
+                for(int i=0;i<list.size();i++){
+                    System.out.println(list.get(i).toString());
+                }
+//                System.out.println(list.toString());
                 System.out.println("Successfully Sorted By OrderDescription....");
             } else if (choice == 3) {
                 Collections.sort(list, new Comparator<Order>() {
@@ -125,7 +141,12 @@ public class OrderManagementImpl implements OrderManagement{
                         return o1.getDeliveryAddress().compareTo(o2.getDeliveryAddress());
                     }
                 });
-                System.out.println(list.toString());
+                System.out.println(" OrderId \t" + " OrderDescription \t" + " DeliveryAddress \t" + " OrderDateTime \t" + " \t\tAmount \t\t\t" + " DeliveryDateTime \t");
+
+                for(int i=0;i<list.size();i++){
+                    System.out.println(list.get(i).toString());
+                }
+//                System.out.println(list.toString());
                 System.out.println("Successfully sorted on delivery Address.....");
             } else if (choice == 4) {
                 Collections.sort(list, new Comparator<Order>() {
@@ -134,7 +155,13 @@ public class OrderManagementImpl implements OrderManagement{
                         return o1.getOrderDate().compareTo(o2.getOrderDate());
                     }
                 });
-                System.out.println(list.toString());
+                System.out.println(" OrderId \t" + " OrderDescription \t" + " DeliveryAddress \t" + " OrderDateTime \t" + " \t\tAmount \t\t\t" + " DeliveryDateTime \t");
+
+                for(int i=0;i<list.size();i++){
+                    System.out.println(list.get(i).toString());
+                }
+
+//                System.out.println(list.toString());
                 System.out.println("Successfully sorted on order Date....");
             } else if (choice == 5) {
                 Collections.sort(list, new Comparator<Order>() {
@@ -143,7 +170,13 @@ public class OrderManagementImpl implements OrderManagement{
                         return (int) (o1.getAmount() - o2.getAmount());
                     }
                 });
-                System.out.println(list.toString());
+                System.out.println(" OrderId \t" + " OrderDescription \t" + " DeliveryAddress \t" + " OrderDateTime \t" + " \t\tAmount \t\t\t" + " DeliveryDateTime \t");
+
+                for(int i=0;i<list.size();i++){
+                    System.out.println(list.get(i).toString());
+                }
+
+//                System.out.println(list.toString());
                 System.out.println("Successfully sorted on Amount.....");
             } else if (choice == 6) {
                 Collections.sort(list, new Comparator<Order>() {
@@ -152,7 +185,12 @@ public class OrderManagementImpl implements OrderManagement{
                         return o1.getDeliveryDateTime().compareTo(o2.getDeliveryDateTime());
                     }
                 });
-                System.out.println(list.toString());
+                System.out.println(" OrderId \t" + " OrderDescription \t" + " DeliveryAddress \t" + " OrderDateTime \t" + " \t\tAmount \t\t\t" + " DeliveryDateTime \t");
+
+                for(int i=0;i<list.size();i++){
+                    System.out.println(list.get(i).toString());
+                }
+                //System.out.println(list.toString());
                 System.out.println("Successfully sorted on Delivery Date Time....");
             }
 
@@ -187,11 +225,15 @@ public class OrderManagementImpl implements OrderManagement{
     @Override
     public void markAsDelivered(String orderID) {
             Load();
-            System.out.println("The size of the List is : " + list.size());
+//            System.out.println("The size of the List is : " + list.size());
+
+        String dateFormat = "yyyy-MM-dd hh:mm:ss a";
+        LocalDateTime now = LocalDateTime.now();
+        String format = (now.format(DateTimeFormatter.ofPattern(dateFormat)));
 
             for (int i = 0; i < list.size(); i++) {
                 if (orderID.equals(list.get(i).getOrderId())) {
-                    list.get(i).setDeliveryDateTime(LocalDateTime.now());
+                    list.get(i).setDeliveryDateTime(format);
                     System.out.println("Order Delivered Successfully...");
                     break;
                 }
@@ -206,6 +248,7 @@ public class OrderManagementImpl implements OrderManagement{
         Order o = new Order();
         Thread t1 = new Thread(o);
         t1.start();
+        System.out.println("Generated Report Successfully...");
     }
 
     @Override
